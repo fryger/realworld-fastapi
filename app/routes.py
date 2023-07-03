@@ -1,46 +1,21 @@
 from fastapi import APIRouter
 from typing import Optional
 
-authRouter = APIRouter(prefix="/users")
-
-
-@authRouter.post("/login")
-def login():
-    ...
-
-
-@authRouter.post("")
-def register():
-    ...
-
-
-userRouter = APIRouter(prefix="/user")
-
-
-@userRouter.get("")
-def get_user():
-    ...
-
-
-@userRouter.put("")
-def update_user():
-    ...
-
 
 profileRouter = APIRouter(prefix="/profiles")
 
 
-@userRouter.get("/{username}")
+@profileRouter.get("/{username}")
 def get_profile(username: str):
     ...
 
 
-@userRouter.post("/{username}/follow")
+@profileRouter.post("/{username}/follow")
 def follow_profile(username: str):
     ...
 
 
-@userRouter.delete("/{username}/follow")
+@profileRouter.delete("/{username}/follow")
 def unfollow_profile(username: str):
     ...
 
@@ -126,7 +101,6 @@ def get_tags():
 
 defaultRouter = APIRouter(prefix="/api")
 
-defaultRouter.include_router(authRouter)
 defaultRouter.include_router(profileRouter)
 defaultRouter.include_router(articleRouter)
 defaultRouter.include_router(tagRouter)
