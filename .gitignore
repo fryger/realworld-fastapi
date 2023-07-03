@@ -1,4 +1,5 @@
 .vscode
+realworld-example.sqlite
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
