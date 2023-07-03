@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-SQLITE_DATABASE_URL = "sqlite:///./realworld-example.db"
+SQLITE_DATABASE_URL = "sqlite:///./realworld-example.sqlite"
 
 engine = create_engine(
     SQLITE_DATABASE_URL, echo=True, connect_args={"check_same_thread": False}
@@ -13,8 +13,13 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
+def create_database():
+    Base.metadata.create_all(engine)
+
+
 def get_db():
     db = SessionLocal()
+
     try:
         yield db
     finally:

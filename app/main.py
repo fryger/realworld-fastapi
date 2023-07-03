@@ -1,10 +1,14 @@
 import uvicorn
 from fastapi import FastAPI
-from routes import defaultRouter
+from endpoints.users import userRouter, authRouter
+from database import create_database
 
 app = FastAPI()
 
-app.include_router(defaultRouter)
+app.include_router(authRouter)
+# app.include_router(userRouter)
+
+create_database()
 
 
 @app.get("/")
