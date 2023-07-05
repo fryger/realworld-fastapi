@@ -9,7 +9,7 @@ load_dotenv()
 app = FastAPI()
 
 app.include_router(authRouter)
-
+app.include_router(userRouter)
 create_database()
 
 
