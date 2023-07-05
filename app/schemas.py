@@ -4,12 +4,25 @@ from pydantic import BaseModel
 
 
 class UserRegisterSchema(BaseModel):
-    # id: int
     email: str
     username: str
     password: str
-    # bio: str
-    # image: str
 
-    # class Config:
-    #     orm_mode = True
+
+class UserLoginSchema(BaseModel):
+    email: str
+    password: str
+
+
+
+class UserResponseSchema(BaseModel):
+    id: int
+    email: str
+    username: str
+    # password: str
+    token: str
+    bio: Union[str, None]
+    image: Union[str, None]
+
+    class Config:
+        orm_mode = True

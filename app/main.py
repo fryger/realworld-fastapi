@@ -2,11 +2,13 @@ import uvicorn
 from fastapi import FastAPI
 from endpoints.users import userRouter, authRouter
 from database import create_database
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
 app.include_router(authRouter)
-# app.include_router(userRouter)
 
 create_database()
 
