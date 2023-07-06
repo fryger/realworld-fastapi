@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from endpoints.users import userRouter, authRouter
-from database import create_database
+from database import engine, Base
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -10,7 +10,18 @@ app = FastAPI()
 
 app.include_router(authRouter)
 app.include_router(userRouter)
-create_database()
+
+
+@app.on_event("startup")
+async def init_tables():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
+
+
+@app.on_event("shutdown")
+async def shutdown():
+    await app.db_connection.close()
 
 
 @app.get("/")
