@@ -1,5 +1,10 @@
 # from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import create_async_engine
+from asyncio import current_task
+from sqlalchemy.ext.asyncio import (
+    create_async_engine,
+    AsyncSession,
+    async_scoped_session,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
@@ -9,19 +14,13 @@ SQLITE_DATABASE_URL = "sqlite+aiosqlite:///./realworld-example.sqlite"
 engine = create_async_engine(
     SQLITE_DATABASE_URL, echo=True, connect_args={"check_same_thread": False}
 )
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()
 
 
-def create_database():
-    Base.metadata.create_all(engine)
+async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
-def get_db():
-    db = SessionLocal()
-
-    try:
-        yield db
-    finally:
-        db.close()
+async def get_db() -> AsyncSession:
+    async with async_session() as session:
+        yield session
