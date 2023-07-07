@@ -24,3 +24,9 @@ async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False
 async def get_db() -> AsyncSession:
     async with async_session() as session:
         yield session
+
+
+async def push_to_db(db: AsyncSession, obj):
+    db.add(obj)
+    await db.commit()
+    await db.refresh(obj)
