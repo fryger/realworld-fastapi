@@ -39,6 +39,18 @@ class UserResponseSchema(BaseModel):
     token: Union[str, None]
     bio: Union[str, None]
     image: Union[str, None]
+    following_ids: Union[list, None]
 
     class Config:
         orm_mode = True
+
+
+class ProfileRequestSchema(BaseModel):
+    email: str
+
+
+class ProfileResponseSchema(BaseModel):
+    username: Union[str, None]
+    image: Union[str, None]
+    bio: Union[str, None]
+    following: Union[bool, None]
