@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status, Depends, HTTPException, Response
+from fastapi import APIRouter, status, Depends, Response, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from models import User
 from schemas import (
@@ -8,7 +8,7 @@ from schemas import (
     TokenSchema,
     UserUpdateSchema,
 )
-from database import get_db
+from database import get_db, push_to_db
 from typing import Dict
 from utils import (
     create_access_token,
@@ -20,12 +20,6 @@ from deps import get_current_user
 authRouter = APIRouter(prefix="/api/users")
 
 
-async def push_to_db(db: AsyncSession, obj):
-    db.add(obj)
-    await db.commit()
-    await db.refresh(obj)
-
-
 @authRouter.post("", response_model=Dict[str, UserResponseSchema])
 async def register(
     payload: Dict[str, UserRegisterSchema], db: AsyncSession = Depends(get_db)
@@ -35,7 +29,7 @@ async def register(
     user_exist = result.scalar_one_or_none()
 
     if user_exist:
-        return HTTPException(
+        return Response(
             "User with this email already exist",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
@@ -52,16 +46,17 @@ async def register(
 async def login(
     payload: Dict[str, UserLoginSchema], db: AsyncSession = Depends(get_db)
 ):
-    user = db.query(User).filter(User.email == payload["user"].email).first()
+    result = await db.execute(select(User).where(User.email == payload["user"].email))
+    user = result.scalar_one_or_none()
 
     if user is None:
-        return HTTPException(
+        return Response(
             "User does not exist",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
     if user.password != payload["user"].password:
-        return HTTPException(
+        return Response(
             "Incorrect password",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
@@ -75,16 +70,17 @@ async def login(
 async def login(
     payload: Dict[str, UserLoginSchema], db: AsyncSession = Depends(get_db)
 ):
-    user = db.query(User).filter(User.email == payload["user"].email).first()
+    result = await db.execute(select(User).where(User.email == payload["user"].email))
+    user = result.scalar_one_or_none()
 
     if user is None:
-        return HTTPException(
+        return Response(
             "User does not exist",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
 
     if user.password != payload["user"].password:
-        return HTTPException(
+        return Response(
             "Incorrect password",
             status_code=status.HTTP_400_BAD_REQUEST,
         )
@@ -114,10 +110,11 @@ async def update_user(
     user_update = payload["user"].dict(exclude_unset=True)
 
     for key, value in user_update.items():
-        if key == "email" and (
-            check_user_email := db.query(User).filter(User.email == value).first()
-        ):
-            return HTTPException(
+        result = await db.execute(select(User).where(User.email == value))
+        check_user_email = result.scalar_one_or_none()
+
+        if key == "email" and check_user_email:
+            return Response(
                 "User with that email already exist",
                 status_code=status.HTTP_400_BAD_REQUEST,
             )
