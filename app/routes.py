@@ -2,24 +2,6 @@ from fastapi import APIRouter
 from typing import Optional
 
 
-profileRouter = APIRouter(prefix="/profiles")
-
-
-@profileRouter.get("/{username}")
-def get_profile(username: str):
-    ...
-
-
-@profileRouter.post("/{username}/follow")
-def follow_profile(username: str):
-    ...
-
-
-@profileRouter.delete("/{username}/follow")
-def unfollow_profile(username: str):
-    ...
-
-
 articleRouter = APIRouter(prefix="/articles")
 
 

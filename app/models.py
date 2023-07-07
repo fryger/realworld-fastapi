@@ -1,6 +1,25 @@
 from database import Base
-from sqlalchemy import Column, String, Integer
+from sqlalchemy import Column, String, Integer, ARRAY
 from sqlalchemy_utils import EmailType, PasswordType, URLType
+
+from sqlalchemy.types import TypeDecorator, TEXT, VARCHAR
+
+
+class TextArray(TypeDecorator):
+    impl = TEXT
+
+    def process_bind_param(self, value, dialect):
+        if value is not None:
+            value = ", ".join(str(num) for num in value)
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is not None:
+            value = [int(num) for num in value.split(", ")]
+
+        else:
+            value = []
+        return value
 
 
 class User(Base):
@@ -18,3 +37,4 @@ class User(Base):
     username = Column(String(30), nullable=False, unique=True)
     bio = Column(String(500))
     image = Column(URLType)
+    following_ids = Column(TextArray)
