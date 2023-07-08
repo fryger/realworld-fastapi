@@ -1,6 +1,7 @@
 from datetime import datetime
 from typing import List, Union
 from pydantic import BaseModel
+from datetime import datetime
 
 
 class TokenSchema(BaseModel):
@@ -54,3 +55,26 @@ class ProfileResponseSchema(BaseModel):
     image: Union[str, None]
     bio: Union[str, None]
     following: Union[bool, None]
+
+
+class ArticleResponseSchema(BaseModel):
+    slug: str
+    title: str
+    description: str
+    body: str
+    tagList: Union[list, None]
+    createdAt: datetime
+    updatedAt: datetime
+    favorited: bool
+    favoritesCount: int
+    author: ProfileResponseSchema
+
+    class Config:
+        orm_mode = True
+
+
+class ArticleRequestSchema(BaseModel):
+    title: str
+    description: str
+    body: str
+    tagList: Union[List[str], None]

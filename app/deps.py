@@ -1,14 +1,11 @@
 from typing import Union, Any, Optional, Dict, cast
 from datetime import datetime
 from fastapi import Depends, HTTPException, status
-
 from models import User
 from utils import ALGORITHM, JWT_SECRET_KEY
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-
 from database import get_db
-
 from jose import jwt
 from pydantic import ValidationError
 from schemas import UserResponseSchema, TokenPayload

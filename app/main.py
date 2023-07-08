@@ -2,6 +2,8 @@ import uvicorn
 from fastapi import FastAPI
 from endpoints.users import userRouter, authRouter
 from endpoints.profiles import profileRouter
+from endpoints.articles import articleRouter
+
 from database import engine, Base
 from dotenv import load_dotenv
 
@@ -12,6 +14,7 @@ app = FastAPI()
 app.include_router(authRouter)
 app.include_router(userRouter)
 app.include_router(profileRouter)
+app.include_router(articleRouter)
 
 
 @app.on_event("startup")
